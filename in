@@ -1,0 +1,14 @@
+addi 1,0,5
+addi 2,0,6
+addi 3,0,7
+First:
+jump_procedure Second
+addi 1,0,6
+addi 2,0,5
+addi 3,0,0
+Second:
+ble 2, 1,First
+addi 5,0,321
+add 6,3,3
+sw 5,0(4)
+lw 4,0(4) 

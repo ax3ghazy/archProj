@@ -1,0 +1,16 @@
+addi 1,0,0
+addi 2,0,1
+addi 3,0,0
+sw 2,0(0)
+addi 14,0,1
+addi 15,0,32
+Fib:
+ble 15,14, done
+add 3,2,1
+add 1,0,2
+add 2,0,3
+sw 3,0(14)
+addi 14,14,1
+j Fib
+done:
+addi 9,0,1111

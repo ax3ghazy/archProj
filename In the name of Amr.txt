@@ -1,0 +1,28 @@
+addi 1,0,0
+addi 14,0,210
+addi 2,0,0
+addi 15,0,321
+xor 2,2,15
+ble 15, 2, Karma
+addi 12,0,111
+addi 11,0,222
+addi 10,0,100
+There:
+addi 1,1,1
+jump_procedure Hank
+return_procedure
+xor 2,2,2
+addi 13,0,15
+sw 13,0(13)
+Karma:
+jump_procedure There
+addi 6,0,6
+addi 7,0,7
+j Done
+Hank:
+addi 3,0,3
+addi 4,0,4
+addi 5,0,5
+return_procedure
+Done:
+addi 9,0,1111

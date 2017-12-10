@@ -1,0 +1,14 @@
+addi 5, 0, 1
+addi 6, 0, 3
+addi 7, 0, 0
+loop:
+add 7, 7, 5
+addi 5, 5, 1
+ble 5, 6, loop
+sw 7, 7(0)
+addi 0,0,0
+addi 0,0,0
+addi 0,0,0
+addi 0,0,0
+addi 0,0,0
+addi 0,0,0
