@@ -179,6 +179,23 @@ MainWindow::MainWindow(QWidget *parent) :
     item2->setText("PC");
     ui->tableWidget_4->setHorizontalHeaderItem(0, item2);
 
+    item2 = new QTableWidgetItem;
+    item2->setText("Branch PC");
+    ui->tableWidget_5->setHorizontalHeaderItem(0, item2);
+
+    item2 = new QTableWidgetItem;
+    item2->setText("Target PC");
+    ui->tableWidget_5->setHorizontalHeaderItem(1, item2);
+
+
+    item2 = new QTableWidgetItem;
+    item2->setText("State");
+    ui->tableWidget_5->setHorizontalHeaderItem(2, item2);
+
+    item2 = new QTableWidgetItem;
+    item2->setText("Stack");
+    ui->tableWidget_6->setHorizontalHeaderItem(0, item2);
+
         QObject::connect(ui->pushButton, &QPushButton::clicked,  [=] () {
 
 
@@ -199,7 +216,8 @@ MainWindow::MainWindow(QWidget *parent) :
             simulateCycle();
 
 
-
+            // Pipeline Diagram
+            ui->tableWidget->selectColumn(cyc-1);
             for (int i = 0; i < rowCnt(tableWidget); i++){
                 QTableWidgetItem *item = new QTableWidgetItem;
                 QString text(QString::fromStdString(stages[execTable[i][cyc]+1]));
@@ -209,8 +227,8 @@ MainWindow::MainWindow(QWidget *parent) :
                 ui->tableWidget->setItem(i, colCnt(tableWidget)-1,item);
                 ui->tableWidget->scrollToItem(item);
             }
-            ui->tableWidget->selectColumn(cyc-1);
 
+            //Registers
             for (int i = 0; i < 32; i++){
                 QTableWidgetItem *item = new QTableWidgetItem;
                 QString text(QString::number(reg[i]));
@@ -218,12 +236,9 @@ MainWindow::MainWindow(QWidget *parent) :
                 item->setText(text);
                 item->setFlags(item->flags()^Qt::ItemIsEditable);
                 ui->tableWidget_2->setItem(i, 0,item);
-
-
-
             }
 
-
+            //Memory
             for (int i = 0; i < 32; i++){
                 //ui->tableWidget->selectRow(0);
                 QTableWidgetItem *item = new QTableWidgetItem;
@@ -232,14 +247,47 @@ MainWindow::MainWindow(QWidget *parent) :
                 item->setText(text);
                 item->setFlags(item->flags()^Qt::ItemIsEditable);
                 ui->tableWidget_3->setItem(i, 0,item);
-
-
             }
-
             if (highlightR)
                 ui->tableWidget_2->selectRow(highlightRi);
             else if (highlightM)
                 ui->tableWidget_3->selectRow(highlightMi);
+
+            //BTB
+            ui->tableWidget_5->clearContents();
+            int i = 0;
+            for (auto&& ppair : BTB){
+                if (i >= ui->tableWidget_5->rowCount())
+                    ui->tableWidget_5->insertRow(i);
+
+                QTableWidgetItem *pc_item = new QTableWidgetItem;
+                QTableWidgetItem *targ_item = new QTableWidgetItem;
+                QTableWidgetItem *state_item = new QTableWidgetItem;
+
+                QString pc_text (QString::number(ppair.first));
+                QString targ_text (QString::number(ppair.second.targetPC));
+                QString state_text (QString::number(ppair.second.state));
+
+                pc_item->setText(pc_text);
+                targ_item->setText(targ_text);
+                state_item->setText(state_text);
+
+
+                ui->tableWidget_5->setItem(i, 0, pc_item);
+                ui->tableWidget_5->setItem(i, 1, targ_item);
+                ui->tableWidget_5->setItem(i, 2, state_item);
+                i++;
+            }
+
+            //Stack
+            i = 0;
+            ui->tableWidget_6->clearContents();
+            for (auto&& it : Stack){
+                QTableWidgetItem *item = new QTableWidgetItem;
+                QString text (QString::number(it));
+                item->setText(text);
+                ui->tableWidget_6->setItem(i++, 0, item);
+            }
 
             cyc++;
     }
@@ -1016,13 +1064,14 @@ bool processLine(const string& line) {
         program += "   ";
         program += line;
         program += '\n';
-
         temp.set();
         imem.push_back(temp);
         return true;
     }
     else if (isLabel(line)) {
         labelTable[label] = imem.size();
+        program += line;
+        program += '\n';
         return true;
     }
     else if (false)
